@@ -3,7 +3,7 @@ from datetime import datetime
 import os
 
 def generate_certificate_pdf(partner, co2_kg, credits, cert_id):
-    # 🛡️ Quick fix: remove Unicode characters that cause PDF export errors
+    # Quick fix: remove Unicode characters that cause PDF export errors
     partner = partner.encode("ascii", errors="ignore").decode()
 
     # File setup
