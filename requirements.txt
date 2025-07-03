@@ -1,4 +1,3 @@
 streamlit
 pandas
-fpdf
-pdf.add_font('CustomFont', '', 'fonts/DejaVuSans.ttf', uni=True)
+fpdf==1.7.2
