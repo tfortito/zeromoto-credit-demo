@@ -42,6 +42,28 @@ if csv:
     st.session_state.trip_data = enriched
     st.success(f"{len(enriched)} trips processed.")
 
+# Manual trip entry
+st.header("📝 Manually Add a Trip")
+with st.form("manual_trip_form"):
+    manual_date = st.date_input("Trip Date", value=datetime.today())
+    manual_scooter = st.text_input("Scooter ID")
+    manual_distance = st.number_input("Distance (km)", min_value=0.0, step=0.1)
+    manual_vehicle = st.selectbox("Vehicle Type", list(EMISSION_FACTORS.keys()))
+    submit_manual = st.form_submit_button("Add Trip")
+
+    if submit_manual:
+        emitted, avoided, factor = calculate_emissions(manual_distance, manual_vehicle)
+        st.session_state.trip_data.append({
+            "Date": manual_date.strftime("%Y-%m-%d"),
+            "Scooter ID": manual_scooter or "ZMX-000",
+            "Distance (km)": manual_distance,
+            "Vehicle Type": manual_vehicle,
+            "Emission Factor": factor,
+            "CO₂ Emitted (kg)": emitted,
+            "CO₂ Avoided (kg)": avoided
+        })
+        st.success("Trip added successfully!")
+
 # Show Dashboard
 if st.session_state.trip_data:
     df = pd.DataFrame(st.session_state.trip_data)
