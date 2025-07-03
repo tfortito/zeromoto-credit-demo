@@ -3,43 +3,38 @@ from datetime import datetime
 import os
 
 def generate_certificate_pdf(partner, co2_kg, credits, cert_id):
+    # 🛡️ Quick fix: remove Unicode characters that cause PDF export errors
+    partner = partner.encode("ascii", errors="ignore").decode()
+
+    # File setup
     today = datetime.today().strftime("%Y-%m-%d")
     filename = f"{cert_id}_Zeromoto_Certificate.pdf"
-    filepath = os.path.join("certificates", filename)
+    folder = "certificates"
+    os.makedirs(folder, exist_ok=True)
+    filepath = os.path.join(folder, filename)
 
-    # Ensure directory exists
-    os.makedirs("certificates", exist_ok=True)
-
+    # PDF creation
     pdf = FPDF("L", "mm", "A4")
     pdf.add_page()
+    pdf.set_font("Arial", "B", 20)
 
-    try:
-        pdf.add_font('ArialUnicode', '', fname='Arial.ttf', uni=True)
-        pdf.set_font("ArialUnicode", "", 18)
-    except:
-        # fallback to default
-        pdf.set_font("Arial", "", 18)
+    # Title
+    pdf.cell(0, 15, "Zeromoto Carbon Credit Certificate", ln=True, align="C")
 
-    # Header
-    pdf.set_font_size(24)
-    pdf.cell(0, 20, "Zeromoto Carbon Credit Certificate", ln=True, align="C")
-
-    # Partner
-    pdf.set_font_size(18)
-    pdf.cell(0, 15, f"Issued to: {partner}", ln=True, align="C")
-
-    # Data
+    # Certificate body
+    pdf.set_font("Arial", "", 16)
     pdf.ln(10)
-    pdf.set_font_size(14)
-    pdf.cell(0, 10, f"Certificate ID: {cert_id}", ln=True, align="C")
-    pdf.cell(0, 10, f"Issue Date: {today}", ln=True, align="C")
-    pdf.cell(0, 10, f"Total CO₂ Avoided: {co2_kg:.2f} kg", ln=True, align="C")
-    pdf.cell(0, 10, f"Zeromoto Credits Earned: {credits:.3f} ZMT", ln=True, align="C")
+    pdf.cell(0, 12, f"Issued to: {partner}", ln=True, align="C")
+    pdf.cell(0, 12, f"Certificate ID: {cert_id}", ln=True, align="C")
+    pdf.cell(0, 12, f"Issue Date: {today}", ln=True, align="C")
+    pdf.cell(0, 12, f"Total CO₂ Avoided: {co2_kg:.2f} kg", ln=True, align="C")
+    pdf.cell(0, 12, f"ZMT Credits Earned: {credits:.3f}", ln=True, align="C")
 
     # Footer
-    pdf.ln(20)
-    pdf.set_font_size(12)
-    pdf.cell(0, 10, "This certificate is a simulated climate impact document.", ln=True, align="C")
+    pdf.ln(15)
+    pdf.set_font("Arial", "I", 12)
+    pdf.cell(0, 10, "This certificate simulates climate impact for clean mobility fleets.", ln=True, align="C")
 
+    # Output
     pdf.output(filepath)
     return filepath
