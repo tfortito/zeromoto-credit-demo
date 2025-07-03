@@ -1,3 +1,4 @@
 streamlit
 pandas
 fpdf
+pdf.add_font('CustomFont', '', 'fonts/DejaVuSans.ttf', uni=True)
